@@ -1,5 +1,4 @@
 const numberOfBarsInputEl = document.getElementById('number-of-bars');
-console.log(numberOfBarsInputEl.value);
 
 const creatRandomArray = (min, max) => {
   const array = new Array(max - min + 1).fill(0).map((_, index) => min + index);
@@ -20,7 +19,7 @@ const createBarChart = data => {
   } else {
     for (var i = 0; i < data.length; i++) {
       const percentage = ((data[i] - min) / (max - min)) * 100;
-      html += `<div id="${data[i]}" class="bar" style="width:${width}%;height:${percentage}%;border: 1px solid rgb(158, 100, 128);"></div>`;
+      html += `<div id="${data[i]}" class="bar" style="width:${width}%;height:${percentage}%;border: 1px solid var(--primary);"></div>`;
     }
   }
   return html;
