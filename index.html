@@ -11,6 +11,8 @@
 
 <body>
       <div class="main-container">
+            <h1 class="title">Sorting Visualisation</h1>
+            <h2 class="subtitle">Status: <span class="empathize">unsorted</span></h2>
 
             <div id="chart">
 
@@ -27,12 +29,17 @@
                   <button class="btn" id="radix">Radix Sort</button>
                   <button class="btn" id="comb">Comb Sort</button>
                   <button class="btn" id="tim">Tim Sort</button>
-                  <button class="btn" id="create">create</button>
             </div>
-            <label for="number-of-bars">Number of bars</label>
-            <input id="number-of-bars" value="100" type="number">
-            <script src="script.js"></script>
+
+            <div class="input-container">
+                  <label for="number-of-bars">Number of bars:</label>
+                  <input id="number-of-bars" value="100" type="number">
+                  <button class="btn create" id="create">create</button>
+            </div>
+
       </div>
+
+      <script src="script.js"></script>
 </body>
 
 </html>

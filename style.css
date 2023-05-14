@@ -23,6 +23,13 @@ html {
   align-content: center;
 }
 
+.subtitle {
+  font-weight: 300;
+}
+.empathize {
+  color: var(--secondary);
+  font-weight: 500;
+}
 .main-container {
   padding: 2rem;
   width: 100vw;
@@ -48,6 +55,7 @@ html {
 }
 
 .button-container {
+  margin-block: 2rem;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -55,26 +63,38 @@ html {
 }
 
 .btn {
+  text-transform: uppercase;
   background-color: var(--primary);
   width: 10rem;
   color: white;
   border: none;
   padding: 0.5rem 0 0.5rem 0;
-  font-size: 1.5rem;
+  font-size: 1rem;
   border-radius: 0.5rem;
   margin: 1rem;
   border: 2px solid rgba(255, 255, 255, 0);
 }
 .btn:hover {
   border: 2px solid white;
-  background-color: rgb(244, 192, 217);
-  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+  background-color: var(--secondary);
+  box-shadow: 0 0 1rem rgb(255, 255, 255);
   transform: scale(105%);
 }
 
+.create {
+  background-color: var(--secondary);
+}
+.create:hover {
+  background-color: var(--primary);
+}
+.input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 input {
   background-color: var(--primary);
-  border: 2px solid var(--secondary);
+  border: 2px solid var(--text);
   color: var(--text);
   font-family: 'Lato', sans-serif;
   font-weight: 700;
@@ -84,4 +104,14 @@ input {
   height: 1rem;
   padding: 1rem;
   border-radius: 1rem;
+}
+
+input:active,
+input:hover,
+input:focus {
+  outline: 2px solid var(--secondary);
+}
+label {
+  font-size: 1.5rem;
+  margin-right: 1rem;
 }
