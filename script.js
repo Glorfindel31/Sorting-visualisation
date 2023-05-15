@@ -1,16 +1,26 @@
-const numberOfBarsInputEl = document.getElementById('number-of-bars');
+// status variable decleration
+let statusSorted = false;
 
+const numberOfBarsInputEl = document.getElementById('number-of-bars');
+const statusEl = document.getElementsByClassName('empathize');
+
+// Create a random array of numbers
 const creatRandomArray = (min, max) => {
+  // Create the array
   const array = new Array(max - min + 1).fill(0).map((_, index) => min + index);
+  // return the array in a random order
   return array.sort(() => Math.random() - 0.5).sort(() => Math.random() - 0.5);
 };
 
+// Create a bar chart
 const createBarChart = data => {
-  const max = Math.max(...data);
+  // Array Variables start and end
+  const max = numberOfBarsInputEl.value;
   const min = 1;
+  // computing the width of each bar
   const width = 100 / data.length;
   let html = '';
-
+  // Check if the number of bars is greater than 500 to implement borders or not
   if (numberOfBarsInputEl.value > 500) {
     for (var i = 0; i < data.length; i++) {
       const percentage = ((data[i] - min) / (max - min)) * 100;
@@ -25,27 +35,28 @@ const createBarChart = data => {
   return html;
 };
 
+// Create variable for the sorting algorithms
 const data = creatRandomArray(1, numberOfBarsInputEl.value);
 let html = createBarChart(data);
-let chartEl = document.getElementById('chart');
+const chartEl = document.getElementById('chart');
 chartEl.innerHTML = html;
 
+// Function to update the bars on the screen
 const updateBarsPositions = sortedArray => {
-  const chart = document.getElementById('chart');
-  chart.innerHTML = ''; // Clear the chart
+  chartEl.innerHTML = ''; // Clear the chart
 
-  const max = Math.max(...sortedArray);
-  const min = Math.min(...sortedArray);
+  const min = 1;
+  const max = numberOfBarsInputEl.value;
   const width = 100 / sortedArray.length;
 
-  sortedArray.forEach((value, index) => {
+  sortedArray.forEach(value => {
     const percentage = ((value - min) / (max - min)) * 100;
     const bar = document.createElement('div');
     bar.id = value.toString();
     bar.className = 'bar';
     bar.style.width = `${width}%`;
     bar.style.height = `${percentage}%`;
-    chart.appendChild(bar);
+    chartEl.appendChild(bar);
   });
 };
 
@@ -68,6 +79,10 @@ const bubbleSort = (arr, i = 0, sorted = false) => {
       bubbleSort(arr, i + 1);
     });
   }
+
+  if (sorted) {
+    isSorted(arr);
+  }
 };
 
 const insertionSort = (arr, i = 1) => {
@@ -88,10 +103,27 @@ const insertionSort = (arr, i = 1) => {
     requestAnimationFrame(() => {
       insertionSort(arr, i + 1);
     });
+  } else {
+    isSorted(arr);
   }
 };
 
 const quickSort = (arr, low = 0, high = arr.length - 1) => {
+  const partition = (arr, low, high) => {
+    const pivot = arr[high];
+    let i = low - 1;
+
+    for (let j = low; j <= high - 1; j++) {
+      if (arr[j] < pivot) {
+        i++;
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+    return i + 1;
+  };
+
   if (low < high) {
     const pivotIndex = partition(arr, low, high);
     updateBarsPositions(arr);
@@ -102,31 +134,14 @@ const quickSort = (arr, low = 0, high = arr.length - 1) => {
     requestAnimationFrame(() => {
       quickSort(arr, pivotIndex + 1, high);
     });
+  } else {
+    isSorted(arr);
   }
-};
-
-const partition = (arr, low, high) => {
-  const pivot = arr[high];
-  let i = low - 1;
-
-  for (let j = low; j <= high - 1; j++) {
-    if (arr[j] < pivot) {
-      i++;
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-  }
-
-  [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
-  return i + 1;
 };
 
 const bucketSort = (arr, bucketSize = 5) => {
-  if (arr.length === 0) {
-    return arr;
-  }
-
-  const min = Math.min(...arr);
-  const max = Math.max(...arr);
+  const min = 1;
+  const max = numberOfBarsInputEl.value;
 
   const bucketCount = Math.floor((max - min) / bucketSize) + 1;
   const buckets = new Array(bucketCount);
@@ -171,6 +186,8 @@ const bucketSort = (arr, bucketSize = 5) => {
       }
       currentBucketIndex++;
       requestAnimationFrame(sortBuckets);
+    } else {
+      isSorted(sortedArray);
     }
   };
 
@@ -180,23 +197,6 @@ const bucketSort = (arr, bucketSize = 5) => {
 const shellSort = arr => {
   const length = arr.length;
   let gap = Math.floor(length / 2);
-
-  const bubbleSort2 = (arr, i = 0, sorted = false) => {
-    const length = arr.length;
-
-    for (let i = 0; i < length - 1; i++) {
-      let sorted = true;
-      for (let j = 0; j < length - i - 1; j++) {
-        if (arr[j] > arr[j + 1]) {
-          [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-          sorted = false;
-        }
-      }
-      if (sorted) {
-        break; // Optimization: If no swaps are made, the array is already sorted
-      }
-    }
-  };
 
   const sortStep = () => {
     if (gap > 0) {
@@ -215,6 +215,8 @@ const shellSort = arr => {
       gap = Math.floor(gap / 2);
       updateBarsPositions(arr);
       requestAnimationFrame(sortStep);
+    } else {
+      isSorted(arr);
     }
   };
 
@@ -269,6 +271,7 @@ const mergeSort = arr => {
 
   const sortedArray = mergeSortRecursive(arr);
   updateBarsPositions(sortedArray);
+  isSorted(sortedArray);
 };
 
 const selectionSort = arr => {
@@ -291,34 +294,37 @@ const selectionSort = arr => {
       currentIndex++;
       updateBarsPositions(arr);
       requestAnimationFrame(selectionStep);
+    } else {
+      isSorted(arr);
     }
   };
 
   selectionStep();
 };
 
-const countSort = (arr, digit) => {
-  const count = Array.from({length: 10}, () => []);
-
-  arr.forEach(value => {
-    const digitValue = Math.floor(value / digit) % 10;
-    count[digitValue].push(value);
-  });
-
-  let sortedArray = [];
-  for (let i = 0; i < count.length; i++) {
-    sortedArray = sortedArray.concat(count[i]);
-  }
-
-  return sortedArray;
-};
-
 const radixSort = arr => {
   const maxDigits = numberOfBarsInputEl.value.toString().length;
+
+  const countSort = (arr, digit) => {
+    const count = Array.from({length: 10}, () => []);
+
+    arr.forEach(value => {
+      const digitValue = Math.floor(value / digit) % 10;
+      count[digitValue].push(value);
+    });
+
+    let sortedArray = [];
+    for (let i = 0; i < count.length; i++) {
+      sortedArray = sortedArray.concat(count[i]);
+    }
+
+    return sortedArray;
+  };
 
   const radixSortStep = (arr, digit) => {
     if (digit >= maxDigits) {
       updateBarsPositions(arr);
+      isSorted(arr);
       return;
     }
 
@@ -351,6 +357,8 @@ const combSort = arr => {
     if (gap === 1 && !swapped) {
       // Sorting completed
       return;
+    } else {
+      isSorted(arr);
     }
 
     // Update the gap for the next iteration
@@ -373,142 +381,34 @@ const combSort = arr => {
   combSortStep();
 };
 
-const insertionSort2 = (arr, left, right) => {
-  for (let i = left + 1; i <= right; i++) {
-    const temp = arr[i];
-    let j = i - 1;
-
-    while (j >= left && arr[j] > temp) {
-      arr[j + 1] = arr[j];
-      j--;
-    }
-
-    arr[j + 1] = temp;
-  }
-};
-
-const merge = (arr, left, mid, right) => {
-  const len1 = mid - left + 1;
-  const len2 = right - mid;
-
-  const leftArr = new Array(len1);
-  const rightArr = new Array(len2);
-
-  for (let i = 0; i < len1; i++) {
-    leftArr[i] = arr[left + i];
-  }
-  for (let i = 0; i < len2; i++) {
-    rightArr[i] = arr[mid + 1 + i];
-  }
-
-  let i = 0;
-  let j = 0;
-  let k = left;
-
-  while (i < len1 && j < len2) {
-    if (leftArr[i] <= rightArr[j]) {
-      arr[k] = leftArr[i];
-      i++;
+const isSorted = arr => {
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i - 1] > arr[i]) {
+      statusSorted = false;
+      break;
     } else {
-      arr[k] = rightArr[j];
-      j++;
+      statusSorted = true;
+      statusEl[0].innerText = 'sorted';
     }
-    k++;
-  }
-
-  while (i < len1) {
-    arr[k] = leftArr[i];
-    i++;
-    k++;
-  }
-
-  while (j < len2) {
-    arr[k] = rightArr[j];
-    j++;
-    k++;
   }
 };
 
-const timSort = (arr, minRun = 32) => {
-  const length = arr.length;
+// all btn
 
-  for (let i = 0; i < length; i += minRun) {
-    insertionSort2(arr, i, Math.min(i + minRun - 1, length - 1));
+document.querySelector('.button-container').addEventListener('click', e => {
+  if (e.target.className === 'btn') {
+    const sortingAlgorithm = e.target.id + 'Sort';
+    const barsEl = Array.from(document.querySelectorAll('.bar'));
+    const bars = barsEl.map(bar => parseInt(bar.id));
+    eval(sortingAlgorithm)(bars);
   }
-
-  let runSize = minRun;
-  while (runSize < length) {
-    for (let start = 0; start < length; start += 2 * runSize) {
-      const mid = Math.min(start + runSize - 1, length - 1);
-      const end = Math.min(start + 2 * runSize - 1, length - 1);
-      merge(arr, start, mid, end);
-    }
-
-    runSize *= 2;
-  }
-
-  updateBarsPositions(arr);
-};
-
-document.getElementById('tim').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  timSort(bars);
 });
 
-document.getElementById('comb').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  combSort(bars);
-});
-
-document.getElementById('radix').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  radixSort(bars);
-});
-
-document.getElementById('selection').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  selectionSort(bars);
-});
-
-document.getElementById('merge').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  mergeSort(bars);
-});
-
-document.getElementById('shell').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  shellSort(bars);
-});
-
-document.getElementById('bubble').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  bubbleSort(bars);
-});
-document.getElementById('insertion').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  insertionSort(bars);
-});
-document.getElementById('quick').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  quickSort(bars);
-});
-document.getElementById('bucket').addEventListener('click', () => {
-  const barsEl = Array.from(document.querySelectorAll('.bar'));
-  const bars = barsEl.map(bar => parseInt(bar.id));
-  bucketSort(bars);
-});
-
+// reset btn
 document.getElementById('create').addEventListener('click', () => {
   const data = creatRandomArray(1, numberOfBarsInputEl.value);
   let html = createBarChart(data);
   chartEl.innerHTML = html;
+  statusSorted = false;
+  statusEl[0].innerText = 'unsorted';
 });
